@@ -1,42 +1,52 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
+import axios from 'axios';
+import Loader from './components/loader';
+import { useEffect, useState } from 'react';
+import Weather from './components/weather';
+import * as Location from 'expo-location'
+
+const API_KEY = "be60feb821cbd0e0d00b0b6a1e590756"
+// https://api.openweathermap.org/data/2.5/weather?lon=128.7413&lat=35.8251&appid=be60feb821cbd0e0d00b0b6a1e590756
+
+
 
 export default function App() {
+  const [isLoading, setIsLoading] = useState(true)
+  const [location, setLocation] = useState(null)
+  const getWeather = async (latitude, longitude) => {
+    const {data} = await axios.get(`https://api.openweathermap.org/data/2.5/weather?lon=${longitude}&lat=${latitude}&appid=${API_KEY}`)
+     setLocation(data);
+     setIsLoading(false)
+  }
+
+
+
+  const getLocation = async () => {
+    try {
+      const {status} = await Location.requestForegroundPermissionsAsync();
+      if (status  !== "granted") {
+        Alert.alert('Hey!', 'We need your permission to access your location');
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+      const {
+        coords: {latitude, longitude}, } = await  Location.getCurrentPositionAsync({});
+        getWeather(latitude, longitude)
+    } catch (error) {
+      Alert.alert("You can't use this app  without GPS");
+    }
+  }
+
+
+
+  useEffect(() => {
+      getLocation();
+  }, [])
+  
   return (
-    <View style={styles.container}>
-      <View style={styles.box1}></View>
-      <View style={styles.box2}>
-        <Text style={styles.text}>Akhmad Here</Text>
-      </View>
-      <View style={styles.box3}></View>
-    </View>
+    isLoading ? <Loader/> : <Weather/>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  box1:{
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  box2:{
-    flex: 2,
-    backgroundColor: '#333',
-    flexGrow: 24,
-  },
-  text: {
-    fontSize: 20,
-    marginHorizontal: 10,
-    color:'#fff',
-    margin: 'auto',
-    position:'relative'
-  },
-  box3:{
-    flex: 1,
-    backgroundColor: '#fff'
-  }
-
-  
-});
+const styles = StyleSheet.create({});
