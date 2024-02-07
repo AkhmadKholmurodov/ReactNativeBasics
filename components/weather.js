@@ -198,5 +198,7 @@ const styles = StyleSheet.create({
     btn: {
         width: '30%',
 
+
+        
     }
 })
