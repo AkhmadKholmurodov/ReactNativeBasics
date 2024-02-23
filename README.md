@@ -4,5 +4,3 @@ I used openweathermap api.
 
 After I Build I searched my city that I Borned, It works very well!!
 
-
-****
