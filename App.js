@@ -58,6 +58,8 @@ export default function App() {
       condition={location.weather[0].main}/>
     )
   );
+
+
 }
 
 const styles = StyleSheet.create({});
